@@ -1,0 +1,35 @@
+{
+"extensionModelLoaderDescriptor": {
+    "id": "crafted",
+    "attributes": {
+      "type": "au.com.apiled.module.api.extension.AdvancedLoggerExtensionLoadingDelegate",
+      "version": "1.0.0"
+    }
+  },
+  "name": "Advanced Logger",
+  "minMuleVersion": "4.9.0",
+  "requiredProduct": "MULE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [
+        "au.com.apiled.module.api.component",
+        "au.com.apiled.module.api.processor",
+        "au.com.apiled.module.api.extension",
+        "org.mule.runtime.core.internal.interception"
+      ],
+      "exportedResources": [
+        "META-INF/mule.schemas",
+        "META-INF/advance-logger-modules.xsd",
+        "META-INF/mule-module.properties",
+        "META-INF/icons/icon.svg",
+       "META-INF/org.mule.runtime.dsl.api.component.ComponentBuildingDefinitionProvider",
+       "META-INF/org.mule.runtime.dsl.api.xml.XmlNamespaceInfoProvider"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

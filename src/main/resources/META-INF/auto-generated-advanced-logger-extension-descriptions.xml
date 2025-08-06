@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension-documentation>
+	<configs>
+		<config name="config">
+			<description><![CDATA[Default configuration]]></description>
+			<parameters />
+		</config>
+	</configs>
+	<connections />
+	<extension name="Advanced Logger">
+		<description><![CDATA[Advanced Logger Component]]></description>
+		<parameters />
+	</extension>
+	<operations>
+		<operation name="logger">
+			<description><![CDATA[Log transactions]]></description>
+			<parameters>
+				<parameter name="message">
+					<description><![CDATA[Message to be logged]]></description>
+				</parameter>
+				<parameter name="level">
+					<description><![CDATA[Log level]]></description>
+				</parameter>
+				<parameter name="category">
+					<description><![CDATA[Log category]]></description>
+				</parameter>
+				<parameter name="tag">
+					<description><![CDATA[Log tag]]></description>
+				</parameter>
+				<parameter name="action">
+					<description><![CDATA[Action]]></description>
+				</parameter>
+				<parameter name="event">
+					<description><![CDATA[Event]]></description>
+				</parameter>
+				<parameter name="isSubflow">
+					<description><![CDATA[Is Subflow]]></description>
+				</parameter>
+				<parameter name="customProperties">
+					<description><![CDATA[Custom Properties]]></description>
+				</parameter>
+				<parameter name="advancedLoggerBaseAttributes">
+					<description><![CDATA[Advanced Logger Base Attributes]]></description>
+				</parameter>			
+			</parameters>
+		</operation>
+	</operations>
+	<sources />
+	<types>
+		<type name="au.com.apiled.module.api.component.AdvancedLoggerBaseAttributes">
+			<description><![CDATA[Representation of Advanced Logger logger attributes.
+
+ @since 1.0]]></description>
+			<parameters>
+				<parameter name="start">
+					<description><![CDATA[Start of the transaction]]></description>
+				</parameter>
+				<parameter name="end">
+					<description><![CDATA[End of the transaction]]></description>
+				</parameter>
+				<parameter name="transactionId">
+					<description><![CDATA[Transaction id]]></description>
+				</parameter>
+				<parameter name="action">
+					<description><![CDATA[Action]]></description>
+				</parameter>
+				<parameter name="event">
+					<description><![CDATA[Event]]></description>
+				</parameter>
+				<parameter name="timeTaken">
+					<description><![CDATA[Time taken to complete the transaction]]></description>
+				</parameter>
+				<parameter name="customProperties">
+					<description><![CDATA[Map custom properties that will be logged]]></description>
+				</parameter>
+
+			</parameters>
+		</type>
+
+	</types>
+</extension-documentation>

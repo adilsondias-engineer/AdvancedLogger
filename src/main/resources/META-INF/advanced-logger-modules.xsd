@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.apiled.com.au/modules"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+	targetNamespace="http://www.apiled.com.au/modules"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:import namespace="http://www.mulesoft.org/schema/mule/core"
+		schemaLocation="http://www.mulesoft.org/schema/mule/core/current/mule.xsd" />
+
+	<xsd:element name="logger" type="loggerType"
+		substitutionGroup="mule:abstract-message-processor"> <!-- abstract-observer-message-processor -->
+		<xsd:annotation>
+			<xsd:documentation>
+				Performs logging using an expression that
+				determines what should be logged.
+				By default the current messages is
+				logged using the INFO level to the
+				'org.mule.runtime.core.api.processor.LoggerMessageProcessor'
+				category but the level and
+				category can both be configured to suit
+				your needs.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:complexType name="loggerType">
+		<xsd:complexContent>
+			<xsd:extension base="mule:abstractMessageProcessorType">
+				<xsd:sequence minOccurs="0" maxOccurs="1">
+					<xsd:element name="custom-properties" type="customPropertiesType">
+						<xsd:annotation>
+							<xsd:documentation>
+								Map of custom properties to be logged
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+                </xsd:sequence>
+				<xsd:attribute name="tag" use="required">
+					<xsd:annotation>
+						<xsd:documentation>
+							The transaction state.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="START" />
+							<xsd:enumeration value="END" />
+							<xsd:enumeration value="NONE" />
+							<xsd:enumeration value="MAIN" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:attribute>
+				<xsd:attribute name="message" type="xsd:string" use="optional">
+					<xsd:annotation>
+						<xsd:documentation>
+							Message that will be logged. Embedded
+							expressions can be used to extract
+							value from the current message.
+							If no message is
+							specified then the current message is used.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="level" use="optional">
+					<xsd:annotation>
+						<xsd:documentation>
+							The logging level to be used. Default is INFO.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="ERROR" />
+							<xsd:enumeration value="WARN" />
+							<xsd:enumeration value="INFO" />
+							<xsd:enumeration value="DEBUG" />
+							<xsd:enumeration value="TRACE" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:attribute>
+				<xsd:attribute name="category" type="xsd:string" use="optional">
+					<xsd:annotation>
+						<xsd:documentation>
+							Sets the logger category.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="action" use="required">
+					<xsd:annotation>
+						<xsd:documentation>
+							The action for the statistics
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="CREATE" />
+							<xsd:enumeration value="UPDATE" />
+							<xsd:enumeration value="DELETE" />
+							<xsd:enumeration value="RETRIEVE" />
+							<xsd:enumeration value="EXCEPTION" />
+							<xsd:enumeration value="NONE" />
+							<xsd:enumeration value="OTHER" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:attribute>
+				<xsd:attribute name="event" type="xsd:string" use="required">
+					<xsd:annotation>
+						<xsd:documentation>
+							Sets the statistics event
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="isSubflow" type="xsd:boolean" use="optional">
+					<xsd:annotation>
+						<xsd:documentation>
+							Is this a subflow? It allows to add start and end time 
+							to subflows only, separated from the main flow if checked
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>			
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="customPropertiesType">
+		<xsd:sequence>
+			<xsd:element name="custom-property" minOccurs="1" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:attribute name="key" type="xsd:string"/>
+					<xsd:attribute name="value" type="xsd:string"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="advancedLoggerBaseAttributesType">
+		<xsd:sequence>
+			<xsd:element name="customPropertyEntry" minOccurs="1" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:attribute name="key" type="xsd:string"/>
+					<xsd:attribute name="value" type="xsd:string"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

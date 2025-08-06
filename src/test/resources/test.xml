@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth"
+     xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
+     xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	 xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	  xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	   xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	    xmlns:http="http://www.mulesoft.org/schema/mule/http" 
+	    xmlns="http://www.mulesoft.org/schema/mule/core"
+	     xmlns:advanced-logger="http://www.api-led.com.au/modules"
+	      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.api-led.com.au/modules http://www.api-led.com.au/modules/advanced-logger-modules.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd
+http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1d42bd0e-f2c2-4091-af40-eb600276754e" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="7550ee03-816c-496f-acb2-416ec00e40ea">
+		<http:request-connection host="localhost" port="8081" />
+	</http:request-config>
+	
+	<flow name="testFlow" doc:id="7b669491-1803-48d3-9010-a700bc58def0" >
+		<http:listener doc:name="Listener" doc:id="1f7f6acf-f644-49a7-9b22-a623bf16c970" config-ref="HTTP_Listener_config" path="/">
+ 			<http:response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"com-transaction-id" :  vars.comBaseAttributes.transactionId
+}]]]></http:headers>
+			</http:response> 
+    
+		</http:listener>
+		
+		<set-payload value='#["Test"]' doc:name="Set Payload" doc:id="e410e101-455b-4c59-9c29-4c7adc3cb9b3" />
+		<set-variable value="mvar" doc:name="Set Variable" doc:id="e261fb93-5d2b-4b42-81aa-82d6df86a065" variableName="myvariable"/>
+		<scripting:execute engine="groovy" doc:name="Execute" doc:id="af1fc2ce-127a-4712-959e-d2c1df0dc429" >
+			<scripting:code >return &quot;t786&quot;</scripting:code>
+		</scripting:execute>
+		<logger level="INFO" doc:name="Logger" doc:id="723b8413-d63c-49bf-ad57-7afe096da49a" category="mule.logger"/>
+		<advanced-logger:logger tag="START" level="DEBUG" doc:name="My Logger" category="logger.start">
+			<advanced-logger:custom-properties>
+				<advanced-logger:custom-property key="myCustomProp2" value="#[payload ++ 'CustomProperty']"/>
+				<advanced-logger:custom-property key="myCustomProp3" value="#['payload']"/>
+			</advanced-logger:custom-properties>
+		</advanced-logger:logger>
+		<logger level="INFO" doc:name="Logger" doc:id="d5eead15-0be0-47b5-8065-51d2dfdca02c" message="#[vars.advancedLoggerBaseAttributes.start]" category="mule.logger"/>
+ 		<advanced-logger:logger tag="NONE" level="DEBUG" doc:name="CoM Utils" category="logger.middle"/>
+ 		<logger level="INFO" doc:name="Logger" doc:id="807e1f1f-8f7f-421a-8d07-126f3cc8fbaf" message="#[attributes.method]" category="mule.logger"/>
+		<http:request method="GET" doc:name="Request" doc:id="87def551-9e1a-4fda-8b98-52de22b90e61" config-ref="HTTP_Request_configuration" path="/newflow">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"com-transaction-id" : vars.comBaseAttributes.transactionId
+}]]]></http:headers>
+		</http:request>
+ 		<advanced-logger:logger tag="END" level="DEBUG" doc:name="My Logger"  message="#[payload]" category="logger.end">
+ 		 	<advanced-logger:custom-properties>
+				<advanced-logger:custom-property key="myCustomProp4" value="myValue4"/>
+				<advanced-logger:custom-property key="myCustomProp5" value="myValue5"/>
+			</advanced-logger:custom-properties>
+ 		</advanced-logger:logger>
+		<advanced-logger:logger tag="NONE" level="DEBUG" doc:name="Advanced Logger" category="logger.after.end"/>
+ 		<logger level="INFO" doc:name="Logger" doc:id="7f7a9b85-9914-4e1c-ba1c-35171e4f06ef" message="#[vars.advancedLoggerBaseAttributes.end]" category="mule.logger"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5dfb67b3-8f34-4d7f-a051-7f7181defe1a" category="mule.logger"/>
+	
+</flow>
+	<flow name="testFlow1" doc:id="603651a8-4546-4a33-8320-8f28fe4f24d8" >
+		<http:listener doc:name="Listener" doc:id="447b19ae-52b7-479a-8c7c-236d80cc8a7d" config-ref="HTTP_Listener_config" path="/newflow" >
+		<http:response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"com-transaction-id" :  vars.comBaseAttributes.transactionId
+}]]]></http:headers>
+			</http:response> 
+    
+		</http:listener>
+		<advanced-logger:logger tag="START" level="DEBUG" doc:name="My Logger" category="logger.newflow.start"/>
+		<logger level="INFO" doc:name="Logger" doc:id="d5eead15-0be0-47b5-8065-51d2dfdca02c" message="#[vars.advancedLoggerBaseAttributes.start]" category="mule.logger"/>
+		<advanced-logger:logger tag="NONE" level="DEBUG" doc:name="Advanced Logger" category="logger.newflow.middle"/>
+		<logger level="INFO" doc:name="Logger" doc:id="807e1f1f-8f7f-421a-8d07-126f3cc8fbaf" message="#[attributes.method]" category="mule.logger"/>
+		<jms:publish doc:name="Publish" doc:id="4e88f654-6be1-4d04-abac-06070f6feb38" config-ref="JMS_Config" destination="dev5-test.my.util.Q">
+			<jms:message >
+				<jms:properties ><![CDATA[#[{"com_transaction_id":vars.comBaseAttributes.transactionId}]]]></jms:properties>
+			</jms:message>
+		</jms:publish>
+		<advanced-logger:logger tag="END" level="DEBUG" doc:name="My Logger" message="#[payload]" category="logger.newflow.end" />
+		<advanced-logger:logger tag="NONE" level="DEBUG" doc:name="CoM Utils" category="logger.newflow.after.end" />
+	
+</flow>
+	<flow name="testFlow2" doc:id="f4b8d77a-f48d-4387-abe8-1be5a5abef40" >
+		<jms:listener doc:name="Listener" doc:id="a5332e4d-ce89-4ff6-874e-d5a7262670fc" config-ref="JMS_Config" destination="dev5-test.my.util.Q" ackMode="AUTO">
+			<jms:consumer-type >
+				<jms:queue-consumer />
+			</jms:consumer-type>
+		</jms:listener>
+		<advanced-logger:logger tag="START" level="DEBUG" doc:name="My Logger" category="logger.jmsflow.start">
+		<advanced-logger:custom-properties>
+			<advanced-logger:custom-property key="myJMSCustomProp2" value="myValue1"/>
+			<advanced-logger:custom-property key="myJMSCustomProp3" value="myValue2"/>
+		</advanced-logger:custom-properties>
+		</advanced-logger:logger>
+		<logger level="INFO" doc:name="Logger" doc:id="ce8aed91-36da-4306-bfb6-da1506c81e95" message="#[vars]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="e337a5bd-55bc-43d5-a854-b0535e23e5b0" message="#[attributes]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="92119e37-2ec7-49ac-86d8-127229d2519b" />
+		<advanced-logger:logger tag="END" level="DEBUG" doc:name="My Logger" message="#[payload]" category="logger.jmsflow.end" />
+	</flow>
+</mule>
