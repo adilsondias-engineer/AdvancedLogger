@@ -66,6 +66,7 @@ If you want to build the Advanced Logger module from source, follow these steps:
 ### Prerequisites
 
 Before building, ensure you have the following installed:
+
 - **Java 17** or higher
 - **Apache Maven 3.9+**
 - **Git**
@@ -88,6 +89,7 @@ mvn clean install
 ```
 
 This command will:
+
 1. Clean any previous build artifacts
 2. Compile the source code
 3. Run tests
@@ -144,6 +146,7 @@ mvn clean install
 ```
 
 Coverage reports will be available at:
+
 ```
 target/site/jacoco/index.html
 ```
@@ -196,6 +199,7 @@ Automatically measure transaction execution time by using START and END tags:
 ```
 
 The logger automatically tracks:
+
 - Start timestamp
 - End timestamp
 - Time taken (in milliseconds)
@@ -249,6 +253,7 @@ Add custom key-value properties for enhanced logging and debugging:
 ```
 
 Custom properties are:
+
 - Stored in the `advancedLoggerBaseAttributes` variable
 - Propagated throughout the flow
 - Available in all subsequent logger calls
@@ -359,15 +364,15 @@ The logger automatically extracts the `xtransaction_id` property from JMS messag
 
 ### Logger Component Attributes
 
-| Attribute | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `tag` | String | No | NONE | Controls logging behavior: START, END, NONE, MAIN |
-| `level` | String | No | INFO | Log level: TRACE, DEBUG, INFO, WARN, ERROR |
-| `category` | String | Yes | - | Logger category for filtering and organization |
-| `message` | String | No | - | Custom message (supports DataWeave expressions) |
-| `isSubflow` | Boolean | No | false | Set to true when logging in subflows |
-| `event` | String | No | - | Custom event name |
-| `action` | String | No | - | Custom action name |
+| Attribute   | Type    | Required | Default | Description                                       |
+| ----------- | ------- | -------- | ------- | ------------------------------------------------- |
+| `tag`       | String  | No       | NONE    | Controls logging behavior: START, END, NONE, MAIN |
+| `level`     | String  | No       | INFO    | Log level: TRACE, DEBUG, INFO, WARN, ERROR        |
+| `category`  | String  | Yes      | -       | Logger category for filtering and organization    |
+| `message`   | String  | No       | -       | Custom message (supports DataWeave expressions)   |
+| `isSubflow` | Boolean | No       | false   | Set to true when logging in subflows              |
+| `event`     | String  | No       | -       | Custom event name                                 |
+| `action`    | String  | No       | -       | Custom action name                                |
 
 ### Tag Values
 
@@ -629,6 +634,7 @@ logger.start  transactionId=1234-5678-90ab-cdef start=2025-01-15T10:30:45.123 en
 ## Best Practices
 
 1. **Use Meaningful Categories**: Choose descriptive category names that help with log filtering and organization
+
    ```xml
    category="order.api.create.start"
    ```
@@ -640,6 +646,7 @@ logger.start  transactionId=1234-5678-90ab-cdef start=2025-01-15T10:30:45.123 en
 4. **Use Custom Properties**: Add relevant business context to logs for better debugging
 
 5. **Set Appropriate Log Levels**:
+
    - `ERROR`: For errors and exceptions
    - `WARN`: For warnings
    - `INFO`: For important business events (production default)
@@ -653,12 +660,14 @@ logger.start  transactionId=1234-5678-90ab-cdef start=2025-01-15T10:30:45.123 en
 ### Transaction ID Not Propagating
 
 Ensure you're passing the transaction ID in HTTP headers or JMS properties:
+
 - HTTP: Use header name `xtransaction-id`
 - JMS: Use property name `xtransaction_id`
 
 ### Timing Not Calculated
 
 Make sure:
+
 - You have both START and END tags
 - The END tag is reached in the flow
 - You're accessing the correct variable: `vars.advancedLoggerBaseAttributes.timeTaken`
@@ -666,6 +675,7 @@ Make sure:
 ### Custom Properties Not Appearing
 
 Verify:
+
 - Custom properties are defined before the END tag
 - DataWeave expressions are valid
 - Variables referenced in expressions exist
@@ -677,6 +687,7 @@ Copyright (c) 2025 API-Led Pty Ltd
 ## Support
 
 For issues, questions, or contributions, please contact API-Led Pty Ltd.
+https://www.api-led.com.au
 
 ---
 
@@ -684,4 +695,3 @@ For issues, questions, or contributions, please contact API-Led Pty Ltd.
 **Vendor**: API-Led Pty Ltd
 **Mule Version**: 4.9.8+
 **Java Version**: 17
-
