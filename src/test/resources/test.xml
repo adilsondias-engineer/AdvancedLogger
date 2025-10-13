@@ -55,7 +55,7 @@ http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oa
 			</advanced-logger:custom-properties>
 		</advanced-logger:logger>
 		<logger level="INFO" doc:name="Logger" doc:id="d5eead15-0be0-47b5-8065-51d2dfdca02c" message="#[vars.advancedLoggerBaseAttributes.start]" category="mule.logger"/>
- 		<advanced-logger:logger tag="NONE" level="DEBUG" doc:name="CoM Utils" category="logger.middle"/>
+ 		<advanced-logger:logger tag="NONE" level="DEBUG" doc:name="Logger" category="logger.middle"/>
  		<logger level="INFO" doc:name="Logger" doc:id="807e1f1f-8f7f-421a-8d07-126f3cc8fbaf" message="#[attributes.method]" category="mule.logger"/>
 		<http:request method="GET" doc:name="Request" doc:id="87def551-9e1a-4fda-8b98-52de22b90e61" config-ref="HTTP_Request_configuration" path="/newflow">
 			<http:headers><![CDATA[#[output application/java
@@ -96,7 +96,7 @@ http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oa
 			</jms:message>
 		</jms:publish>
 		<advanced-logger:logger tag="END" level="DEBUG" doc:name="My Logger" message="#[payload]" category="logger.newflow.end" />
-		<advanced-logger:logger tag="NONE" level="DEBUG" doc:name="CoM Utils" category="logger.newflow.after.end" />
+		
 	
 </flow>
 	<flow name="testFlow2" doc:id="f4b8d77a-f48d-4387-abe8-1be5a5abef40" >

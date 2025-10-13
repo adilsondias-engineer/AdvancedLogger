@@ -3,7 +3,7 @@
     "id": "crafted",
     "attributes": {
       "type": "au.com.apiled.module.api.extension.AdvancedLoggerExtensionLoadingDelegate",
-      "version": "1.0.0"
+      "version": "1.0.2"
     }
   },
   "name": "Advanced Logger",
@@ -23,6 +23,8 @@
         "META-INF/advance-logger-modules.xsd",
         "META-INF/mule-module.properties",
         "META-INF/icons/icon.svg",
+        "META-INF/icons/AL_Logo.png",
+        "META-INF/icons/AL_Logo@2x.png",
        "META-INF/org.mule.runtime.dsl.api.component.ComponentBuildingDefinitionProvider",
        "META-INF/org.mule.runtime.dsl.api.xml.XmlNamespaceInfoProvider"
       ]
