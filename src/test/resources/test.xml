@@ -36,7 +36,7 @@ http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oa
 				<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"com-transaction-id" :  vars.comBaseAttributes.transactionId
+	"xtransaction-id" :  vars.comBaseAttributes.transactionId
 }]]]></http:headers>
 			</http:response> 
     
@@ -61,7 +61,7 @@ http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oa
 			<http:headers><![CDATA[#[output application/java
 ---
 {
-	"com-transaction-id" : vars.comBaseAttributes.transactionId
+	"xtransaction-id" : vars.comBaseAttributes.transactionId
 }]]]></http:headers>
 		</http:request>
  		<advanced-logger:logger tag="END" level="DEBUG" doc:name="My Logger"  message="#[payload]" category="logger.end">
@@ -81,7 +81,7 @@ http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oa
 				<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"com-transaction-id" :  vars.comBaseAttributes.transactionId
+	"xtransaction-id" :  vars.comBaseAttributes.transactionId
 }]]]></http:headers>
 			</http:response> 
     
@@ -92,7 +92,7 @@ http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oa
 		<logger level="INFO" doc:name="Logger" doc:id="807e1f1f-8f7f-421a-8d07-126f3cc8fbaf" message="#[attributes.method]" category="mule.logger"/>
 		<jms:publish doc:name="Publish" doc:id="4e88f654-6be1-4d04-abac-06070f6feb38" config-ref="JMS_Config" destination="dev5-test.my.util.Q">
 			<jms:message >
-				<jms:properties ><![CDATA[#[{"com_transaction_id":vars.comBaseAttributes.transactionId}]]]></jms:properties>
+				<jms:properties ><![CDATA[#[{"xtransaction_id":vars.comBaseAttributes.transactionId}]]]></jms:properties>
 			</jms:message>
 		</jms:publish>
 		<advanced-logger:logger tag="END" level="DEBUG" doc:name="My Logger" message="#[payload]" category="logger.newflow.end" />

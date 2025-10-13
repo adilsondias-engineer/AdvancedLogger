@@ -26,7 +26,6 @@ import org.mule.runtime.core.api.processor.Processor;
 import org.mule.runtime.core.api.processor.ReactiveProcessor;
 import org.mule.runtime.core.api.util.StringUtils;
 import org.mule.runtime.core.api.util.ClassUtils;
-import org.mule.runtime.core.internal.interception.HasParamsAsTemplateProcessor;
 import org.mule.sdk.api.annotation.JavaVersionSupport;
 import org.mule.sdk.api.meta.JavaVersion;
 
@@ -35,22 +34,18 @@ import org.slf4j.LoggerFactory;
 
 import au.com.apiled.module.api.component.AdvancedLoggerBaseAttributes;
 
-@JavaVersionSupport({JavaVersion.JAVA_8, JavaVersion.JAVA_11, JavaVersion.JAVA_17})
-public class AdvancedLoggerProcessor extends AbstractComponent implements Processor,Initialisable {
+@JavaVersionSupport({ JavaVersion.JAVA_8, JavaVersion.JAVA_11, JavaVersion.JAVA_17 })
+public class AdvancedLoggerProcessor extends AbstractComponent implements Processor, Initialisable {
 	private static final String BLOCKING_CATEGORIES_PROPERTY = System.getProperty("com.mule.logging.blockingCategories",
 			"");
 
 	private static final Set<String> BLOCKING_CATEGORIES = new HashSet<>(
 			Arrays.asList(BLOCKING_CATEGORIES_PROPERTY.split(",")));
 
-	private static final String WILDCARD = "*";
-
-
 	private volatile ReactiveProcessor.ProcessingType processingType;
 
 	private transient ClassLoader loggerExecutionClassloader;
 
-	
 	protected transient Logger logger;
 
 	// UI fields
@@ -65,9 +60,7 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 	protected boolean isSubflow = false;
 	protected boolean pushErrorNotification = false;
 	protected String domainName = "${cloudhub.domain}";
-	
 
-	
 	public boolean isSubflow() {
 		return isSubflow;
 	}
@@ -115,8 +108,6 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 	public void setAction(String action) {
 		this.action = action;
 	}
-	
-	
 
 	public String getDomainName() {
 		return domainName;
@@ -125,8 +116,6 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
 	}
-
-
 
 	// others
 	ExtendedExpressionManager expressionManager;
@@ -157,7 +146,7 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 		}
 
 	}
-	
+
 	protected void initProcessingTypeIfPossible() {
 		if (getBlockingCategories().size() == 1 && getBlockingCategories().contains("")) {
 			this.processingType = ReactiveProcessor.ProcessingType.CPU_LITE;
@@ -181,23 +170,21 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 		return getBlockingCategories().stream().anyMatch(blockingCategory -> (blockingCategory.equals(category)
 				|| (category != null && category.startsWith(blockingCategory + "."))));
 	}
-	
-	
+
 	public CoreEvent process(CoreEvent event) throws MuleException {
-		
+
 		return processIt(event);
 	}
-	
+
 	protected CoreEvent processIt(CoreEvent event) {
 		if (this.loggerExecutionClassloader != null) {
 			return ClassUtils.withContextClassLoader(this.loggerExecutionClassloader, () -> doLog(event));
 		} else {
-		return doLog(event);
+			return doLog(event);
 		}
 	}
-	
-	
-	//-----
+
+	// -----
 	private CoreEvent doLog(CoreEvent coreEvent) {
 
 		if (tag.equals("MAIN")) {
@@ -213,7 +200,8 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 							.getValue();
 					if (httpA.getHeaders().get("advanced-logger-transaction-id") != null
 							&& httpA.getHeaders().get("advanced-logger-ransaction-id").length() > 0) {
-						advancedLoggerBaseAttributesTmp.setTransactionId(httpA.getHeaders().get("advanced-logger-transaction-id"));
+						advancedLoggerBaseAttributesTmp
+								.setTransactionId(httpA.getHeaders().get("advanced-logger-transaction-id"));
 					}
 				}
 				if (coreEvent.getMessage().getAttributes().getValue() instanceof JmsAttributes) {
@@ -223,13 +211,15 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 							&& ((String) jmsA.getProperties().getUserProperties().get("advanced_logger_transaction_id"))
 									.length() > 0) {
 						advancedLoggerBaseAttributesTmp.setTransactionId(
-								((String) jmsA.getProperties().getUserProperties().get("advanced_logger_transaction_id")));
+								((String) jmsA.getProperties().getUserProperties()
+										.get("advanced_logger_transaction_id")));
 					}
 				}
 			}
 
 			if (customProperties != null && !customProperties.isEmpty()) {
-				advancedLoggerBaseAttributesTmp = processCustomProperties(advancedLoggerBaseAttributesTmp, customProperties, expressionManager, coreEvent);
+				advancedLoggerBaseAttributesTmp = processCustomProperties(advancedLoggerBaseAttributesTmp,
+						customProperties, expressionManager, coreEvent);
 			}
 			advancedLoggerBaseAttributesTmp.setAction(action);
 			advancedLoggerBaseAttributesTmp.setEvent(getEvent());
@@ -242,7 +232,8 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 
 			// grab existent one if exists
 			if (coreEvent.getVariables().containsKey("advancedLoggerBaseAttributes")) {
-				advancedLoggerBaseAttributesTmp = (AdvancedLoggerBaseAttributes) coreEvent.getVariables().get("advancedLoggerBaseAttributes").getValue();
+				advancedLoggerBaseAttributesTmp = (AdvancedLoggerBaseAttributes) coreEvent.getVariables()
+						.get("advancedLoggerBaseAttributes").getValue();
 			}
 
 			if (!isSubflow) {
@@ -254,19 +245,19 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 					if (coreEvent.getMessage().getAttributes().getValue() instanceof HttpRequestAttributes) {
 						HttpRequestAttributes httpA = (HttpRequestAttributes) coreEvent.getMessage().getAttributes()
 								.getValue();
-						if (httpA.getHeaders().get("com-transaction-id") != null
-								&& httpA.getHeaders().get("com-transaction-id").length() > 0) {
-							advancedLoggerBaseAttributesTmp.setTransactionId(httpA.getHeaders().get("com-transaction-id"));
+						if (httpA.getHeaders().get("xtransaction-id") != null
+								&& httpA.getHeaders().get("xtransaction-id").length() > 0) {
+							advancedLoggerBaseAttributesTmp.setTransactionId(httpA.getHeaders().get("xtransaction-id"));
 						}
 					}
 					if (coreEvent.getMessage().getAttributes().getValue() instanceof JmsAttributes) {
 						JmsAttributes jmsA = (JmsAttributes) coreEvent.getMessage().getAttributes().getValue();
 
-						if (jmsA.getProperties().getUserProperties().get("com_transaction_id") != null
-								&& ((String) jmsA.getProperties().getUserProperties().get("com_transaction_id"))
+						if (jmsA.getProperties().getUserProperties().get("xtransaction_id") != null
+								&& ((String) jmsA.getProperties().getUserProperties().get("xtransaction_id"))
 										.length() > 0) {
 							advancedLoggerBaseAttributesTmp.setTransactionId(
-									((String) jmsA.getProperties().getUserProperties().get("com_transaction_id")));
+									((String) jmsA.getProperties().getUserProperties().get("xtransaction_id")));
 						}
 					}
 				}
@@ -274,14 +265,16 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 			} else {
 				// grab existent one if exists
 				if (coreEvent.getVariables().containsKey("advancedLoggerBaseAttributes")) {
-					advancedLoggerBaseAttributesTmp = (AdvancedLoggerBaseAttributes) coreEvent.getVariables().get("advancedLoggerBaseAttributes").getValue();
+					advancedLoggerBaseAttributesTmp = (AdvancedLoggerBaseAttributes) coreEvent.getVariables()
+							.get("advancedLoggerBaseAttributes").getValue();
 				}
 
 				advancedLoggerBaseAttributesTmp.setStartSubflow(new Date());
 			}
 
 			if (customProperties != null && !customProperties.isEmpty()) {
-				advancedLoggerBaseAttributesTmp = processCustomProperties(advancedLoggerBaseAttributesTmp, customProperties, expressionManager, coreEvent);
+				advancedLoggerBaseAttributesTmp = processCustomProperties(advancedLoggerBaseAttributesTmp,
+						customProperties, expressionManager, coreEvent);
 			}
 			advancedLoggerBaseAttributesTmp.setAction(action);
 			advancedLoggerBaseAttributesTmp.setEvent(getEvent());
@@ -292,7 +285,8 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 
 			AdvancedLoggerBaseAttributes advancedLoggerBaseAttributesTmp;
 			if (coreEvent.getVariables().containsKey("advancedLoggerBaseAttributes")) {
-				advancedLoggerBaseAttributesTmp = (AdvancedLoggerBaseAttributes) coreEvent.getVariables().get("advancedLoggerBaseAttributes").getValue();
+				advancedLoggerBaseAttributesTmp = (AdvancedLoggerBaseAttributes) coreEvent.getVariables()
+						.get("advancedLoggerBaseAttributes").getValue();
 			} else {
 				advancedLoggerBaseAttributesTmp = new AdvancedLoggerBaseAttributes();
 				if (!isSubflow) {
@@ -307,29 +301,34 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 
 				advancedLoggerBaseAttributes = advancedLoggerBaseAttributesTmp;
 
-				long timeTaken = (advancedLoggerBaseAttributesTmp.getEnd().getTime() - advancedLoggerBaseAttributesTmp.getStart().getTime());
+				long timeTaken = (advancedLoggerBaseAttributesTmp.getEnd().getTime()
+						- advancedLoggerBaseAttributesTmp.getStart().getTime());
 				advancedLoggerBaseAttributesTmp.setTimeTaken(timeTaken);
 
 			} else {
 				advancedLoggerBaseAttributesTmp.setEndSubflow(new Date());
 				advancedLoggerBaseAttributes = advancedLoggerBaseAttributesTmp;
 
-				long timeTaken = (advancedLoggerBaseAttributesTmp.getEndSubflow().getTime() - advancedLoggerBaseAttributesTmp.getStartSubflow().getTime());
+				long timeTaken = (advancedLoggerBaseAttributesTmp.getEndSubflow().getTime()
+						- advancedLoggerBaseAttributesTmp.getStartSubflow().getTime());
 				advancedLoggerBaseAttributesTmp.setTimeTaken(timeTaken);
 			}
 			if (customProperties != null && !customProperties.isEmpty()) {
-				advancedLoggerBaseAttributes = processCustomProperties(advancedLoggerBaseAttributes, customProperties, expressionManager,
+				advancedLoggerBaseAttributes = processCustomProperties(advancedLoggerBaseAttributes, customProperties,
+						expressionManager,
 						coreEvent);
 			}
 
 		} else if (tag.equals("NONE")) {
 
 			if (coreEvent.getVariables().containsKey("advancedLoggerBaseAttributes")) {
-				advancedLoggerBaseAttributes = (AdvancedLoggerBaseAttributes) coreEvent.getVariables().get("advancedLoggerBaseAttributes").getValue();
+				advancedLoggerBaseAttributes = (AdvancedLoggerBaseAttributes) coreEvent.getVariables()
+						.get("advancedLoggerBaseAttributes").getValue();
 
 				if (customProperties != null && !customProperties.isEmpty()) {
 
-					advancedLoggerBaseAttributes = processCustomProperties(advancedLoggerBaseAttributes, customProperties, expressionManager,
+					advancedLoggerBaseAttributes = processCustomProperties(advancedLoggerBaseAttributes,
+							customProperties, expressionManager,
 							coreEvent);
 				}
 			}
@@ -337,7 +336,8 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 		}
 
 		if (advancedLoggerBaseAttributes != null) {
-			CoreEvent newEvent = CoreEvent.builder(coreEvent).addVariable("advancedLoggerBaseAttributes", advancedLoggerBaseAttributes)
+			CoreEvent newEvent = CoreEvent.builder(coreEvent)
+					.addVariable("advancedLoggerBaseAttributes", advancedLoggerBaseAttributes)
 					.build();
 
 			try {
@@ -372,16 +372,18 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 	protected void log(CoreEvent coreEvent) {
 
 		String endDate = "";
-		String endDateEvent = "";
-		if (advancedLoggerBaseAttributes != null && advancedLoggerBaseAttributes.getEnd() != null && tag.equals("END") && !isSubflow) {
-			endDate = sdf.format(advancedLoggerBaseAttributes.getEnd()) + " timeTaken=" + advancedLoggerBaseAttributes.getTimeTaken()
+
+		if (advancedLoggerBaseAttributes != null && advancedLoggerBaseAttributes.getEnd() != null && tag.equals("END")
+				&& !isSubflow) {
+			endDate = sdf.format(advancedLoggerBaseAttributes.getEnd()) + " timeTaken="
+					+ advancedLoggerBaseAttributes.getTimeTaken()
 					+ "ms  ";
-			endDateEvent = sdf.format(advancedLoggerBaseAttributes.getEnd());
 		} else {
 			endDate = null;
 		}
 		String endDateSubflow = "";
-		if (advancedLoggerBaseAttributes != null && advancedLoggerBaseAttributes.getEndSubflow() != null && tag.equals("END") && isSubflow) {
+		if (advancedLoggerBaseAttributes != null && advancedLoggerBaseAttributes.getEndSubflow() != null
+				&& tag.equals("END") && isSubflow) {
 			endDateSubflow = sdf.format(advancedLoggerBaseAttributes.getEndSubflow()) + " timeTaken="
 					+ advancedLoggerBaseAttributes.getTimeTaken() + "ms  ";
 		} else {
@@ -438,7 +440,8 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 							|| logger.isTraceEnabled())) {
 
 						logLevel.log(logger,
-								category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId() + " start="
+								category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId()
+										+ " start="
 										+ sdf.format(isSubflow ? advancedLoggerBaseAttributes.getStartSubflow()
 												: advancedLoggerBaseAttributes.getStart())
 										+ " end=" + (isSubflow ? endDateSubflow : endDate) + "  customProperties="
@@ -454,7 +457,8 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 							&& !logger.isDebugEnabled() && !logger.isTraceEnabled()) {
 
 						logLevel.log(logger,
-								category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId() + " start="
+								category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId()
+										+ " start="
 										+ sdf.format(isSubflow ? advancedLoggerBaseAttributes.getStartSubflow()
 												: advancedLoggerBaseAttributes.getStart())
 										+ " end=" + (isSubflow ? endDateSubflow : endDate) + " customProperties="
@@ -464,7 +468,8 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 							|| logger.isDebugEnabled() || logger.isTraceEnabled())) {
 
 						logLevel.log(logger,
-								category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId() + " start="
+								category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId()
+										+ " start="
 										+ sdf.format(isSubflow ? advancedLoggerBaseAttributes.getStartSubflow()
 												: advancedLoggerBaseAttributes.getStart())
 										+ " end=" + (isSubflow ? endDateSubflow : endDate) + "  customProperties="
@@ -480,7 +485,8 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 							&& !logger.isDebugEnabled() && !logger.isTraceEnabled()) {
 
 						logLevel.log(logger,
-								category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId() + " start="
+								category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId()
+										+ " start="
 										+ sdf.format(isSubflow ? advancedLoggerBaseAttributes.getStartSubflow()
 												: advancedLoggerBaseAttributes.getStart())
 										+ " end=" + (isSubflow ? endDateSubflow : endDate) + "  customProperties="
@@ -536,8 +542,10 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 			if (!tag.equals("END") && (level.equals("DEBUG") || level.equals("TRACE") || logger.isDebugEnabled()
 					|| logger.isTraceEnabled())) {
 
-				logLevel.log(logger, category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId() + " start="
-						+ sdf.format(isSubflow ? advancedLoggerBaseAttributes.getStartSubflow() : advancedLoggerBaseAttributes.getStart())
+				logLevel.log(logger, category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId()
+						+ " start="
+						+ sdf.format(isSubflow ? advancedLoggerBaseAttributes.getStartSubflow()
+								: advancedLoggerBaseAttributes.getStart())
 						+ " end= " + (isSubflow ? endDateSubflow : endDate) + "  customProperties="
 						+ advancedLoggerBaseAttributes.getCustomProperties().toString() + " \r\n variables=" + variables
 						+ " \r\n MuleMessage= " + event.getMessage() + "\r\n payload= "
@@ -549,15 +557,18 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 				logLevel.log(logger,
 						category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId() + " start="
 								+ sdf.format(
-										isSubflow ? advancedLoggerBaseAttributes.getStartSubflow() : advancedLoggerBaseAttributes.getStart())
+										isSubflow ? advancedLoggerBaseAttributes.getStartSubflow()
+												: advancedLoggerBaseAttributes.getStart())
 								+ " end=" + (isSubflow ? endDateSubflow : endDate) + "  customProperties="
 								+ advancedLoggerBaseAttributes.getCustomProperties().toString());
 
 			} else if (tag.equals("END") && (level.equals("DEBUG") || level.equals("TRACE") || logger.isDebugEnabled()
 					|| logger.isTraceEnabled())) {
 
-				logLevel.log(logger, category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId() + " start="
-						+ sdf.format(isSubflow ? advancedLoggerBaseAttributes.getStartSubflow() : advancedLoggerBaseAttributes.getStart())
+				logLevel.log(logger, category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId()
+						+ " start="
+						+ sdf.format(isSubflow ? advancedLoggerBaseAttributes.getStartSubflow()
+								: advancedLoggerBaseAttributes.getStart())
 						+ " end=" + (isSubflow ? endDateSubflow : endDate) + "  customProperties="
 						+ advancedLoggerBaseAttributes.getCustomProperties().toString() + " \r\n variables=" + variables
 						+ " \r\n MuleMessage= " + event.getMessage() + "\r\n payload= "
@@ -568,7 +579,8 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 				logLevel.log(logger,
 						category + "  transactionId=" + advancedLoggerBaseAttributes.getTransactionId() + " start="
 								+ sdf.format(
-										isSubflow ? advancedLoggerBaseAttributes.getStartSubflow() : advancedLoggerBaseAttributes.getStart())
+										isSubflow ? advancedLoggerBaseAttributes.getStartSubflow()
+												: advancedLoggerBaseAttributes.getStart())
 								+ " end=" + (isSubflow ? endDateSubflow : endDate) + "  customProperties="
 								+ advancedLoggerBaseAttributes.getCustomProperties().toString());
 			}
@@ -598,7 +610,7 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 			}
 		}
 	}
-	
+
 	@Inject
 	public void setExpressionManager(ExtendedExpressionManager expressionManager) {
 		this.expressionManager = expressionManager;
@@ -620,7 +632,8 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 		this.tag = tag.toUpperCase();
 	}
 
-	private AdvancedLoggerBaseAttributes processCustomProperties(AdvancedLoggerBaseAttributes advancedLoggerBaseAttributes,
+	private AdvancedLoggerBaseAttributes processCustomProperties(
+			AdvancedLoggerBaseAttributes advancedLoggerBaseAttributes,
 			HashMap<String, String> _customProperties, ExtendedExpressionManager expressionManager, CoreEvent event) {
 
 		for (java.util.Map.Entry<String, String> entry : _customProperties.entrySet()) {
@@ -702,7 +715,7 @@ public class AdvancedLoggerProcessor extends AbstractComponent implements Proces
 
 		public abstract boolean isEnabled(Logger logger);
 	}
-	
+
 	protected Set<String> getBlockingCategories() {
 		return BLOCKING_CATEGORIES;
 	}

@@ -1,2 +1,9 @@
 /dependency-reduced-pom.xml
 target/
+
+# IDE folders
+.vscode/
+.sf/
+
+# Hidden folders
+.**/
