@@ -12,6 +12,12 @@ A powerful Mule 4 custom logger module that provides advanced logging capabiliti
 - **Multiple Log Levels**: Support for TRACE, DEBUG, INFO, WARN, and ERROR log levels
 - **Flexible Tagging**: Use START, END, NONE, or MAIN tags to control logging behavior
 
+## TODO Performance Optimizations
+- Asynchronous logging to avoid blocking main thread
+- Circular buffer for log messages
+- Zero-allocation string formatting
+- Configurable batching for throughput optimization
+  
 ## Table of Contents
 
 - [Installation](#installation)
