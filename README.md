@@ -11,7 +11,12 @@ A powerful Mule 4 custom logger module that provides advanced logging capabiliti
 - **Cross-Application Support**: Propagate correlation IDs via HTTP headers and JMS message properties
 - **Multiple Log Levels**: Support for TRACE, DEBUG, INFO, WARN, and ERROR log levels
 - **Flexible Tagging**: Use START, END, NONE, or MAIN tags to control logging behavior
-
+## Distributed Systems Concepts
+- Correlation ID propagation across microservices
+- Transaction tracing in distributed architectures
+- Circuit breaker patterns
+- Eventual consistency handling
+  
 ## TODO Performance Optimizations
 - Asynchronous logging to avoid blocking main thread
 - Circular buffer for log messages
