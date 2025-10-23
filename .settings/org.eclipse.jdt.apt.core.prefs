@@ -4,5 +4,5 @@ org.eclipse.jdt.apt.genSrcDir=target/generated-sources/annotations
 org.eclipse.jdt.apt.genTestSrcDir=target/generated-test-sources/test-annotations
 org.eclipse.jdt.apt.processorOptions/exportedPackagesValidator.skip=false
 org.eclipse.jdt.apt.processorOptions/exportedPackagesValidator.strictValidation=false
-org.eclipse.jdt.apt.processorOptions/extension.resources=E\:\\CoM\\workspace-7.20\\AdvancedLogger/src/main/resources
+org.eclipse.jdt.apt.processorOptions/extension.resources=\\workspace-7.20\\AdvancedLogger/src/main/resources
 org.eclipse.jdt.apt.processorOptions/extension.version=1.0.2-SNAPSHOT
